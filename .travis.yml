@@ -12,7 +12,7 @@ jobs:
   include:
     - stage: test
       name: "Check"
-      script: mvn verify --batch-mode javadoc:javadoc
+      script: mvn verify --batch-mode javadoc:javadoc -Dgpg.skip
     - stage: publish
       if: branch = master AND type = push OR commit_message = PUBLISH
       name: "Publish"
