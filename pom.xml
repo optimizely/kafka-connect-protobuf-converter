@@ -50,9 +50,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/blueapron/kafka-connect-protobuf-converter.git</connection>
-        <developerConnection>scm:git:git@github.com:blueapron/kafka-connect-protobuf-converter.git</developerConnection>
-        <url>https://github.com/blueapron/kafka-connect-protobuf-converter/tree/master</url>
+        <connection>scm:git:git://github.com/optimizely/kafka-connect-protobuf-converter.git</connection>
+        <developerConnection>scm:git:git@github.com:optimizely/kafka-connect-protobuf-converter.git</developerConnection>
+        <url>https://github.com/optimizely/kafka-connect-protobuf-converter/tree/master</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -94,16 +94,23 @@
 
     <distributionManagement>
         <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <id>s3-remote-repository-snapshot</id>
+            <url>s3://optimizely-maven</url>
         </snapshotRepository>
         <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>s3-remote-repository-release</id>
+            <url>s3://optimizely-maven</url>
         </repository>
     </distributionManagement>
 
     <build>
+        <extensions>
+            <extension>
+                <groupId>org.kuali.maven.wagons</groupId>
+                <artifactId>maven-s3-wagon</artifactId>
+                <version>1.2.1</version>
+            </extension>
+        </extensions>
         <plugins>
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
@@ -122,15 +129,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
                 <version>1.6</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
