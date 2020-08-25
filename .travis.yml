@@ -1,0 +1,19 @@
+language: java
+dist: trusty
+branches:
+  only:
+    - master
+jdk:
+  - openjdk8
+sudo: required
+install:
+  mvn install --batch-mode -DskipTests=true -Dmaven.javadoc.skip=true -Dsource.skip=true -B -V -Dgpg.skip
+jobs:
+  include:
+    - stage: test
+      name: "Check"
+      script: mvn verify --batch-mode javadoc:javadoc -Dgpg.skip
+    - stage: publish
+      if: branch = master AND type = push OR commit_message = PUBLISH
+      name: "Publish"
+      script: mvn deploy -DskipTests=true
