@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import com.google.protobuf.util.Timestamps;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.google.protobuf.Descriptors.FieldDescriptor.Type.BOOL;
 import static com.google.protobuf.Descriptors.FieldDescriptor.Type.BYTES;
@@ -45,6 +47,9 @@ import static com.google.protobuf.Descriptors.FieldDescriptor.Type.STRING;
 
 
 class ProtobufData {
+
+  private static final Logger LOG = LoggerFactory.getLogger(ProtobufData.class);
+
   public static final String CONNECT_DECIMAL_PRECISION_PROP = "connect.decimal.precision";
   private final Method newBuilder;
   private final Schema schema;
@@ -415,7 +420,9 @@ class ProtobufData {
     final Struct struct = (Struct) value;
 
     for (Field field : this.schema.fields()) {
-      fromConnectData(builder, field, struct.get(field));
+      // kafka connect by default converts all the field names to lowercase in the schema
+      // and hence converting the field name to lowercase for lookup
+      fromConnectData(builder, field, struct.get(field.name().toLowerCase()));
     }
 
     return builder.build().toByteArray();
@@ -497,7 +504,7 @@ class ProtobufData {
           throw new DataException("Unknown schema type: " + schema.type());
       }
     } catch (ClassCastException e) {
-      throw new DataException("Invalid type for " + schema.type() + ": " + value.getClass());
+      throw new DataException("Field: " + field.name() + " Invalid type for " + schema.type() + ": " + value.getClass());
     }
   }
 }
